@@ -7,3 +7,12 @@
     background-color: darken($dark-white-color, 90%);
   }
 }
+
+%styled-input {
+  border: 1px solid $dark-white-color;
+  border-radius: $primary-radius;
+  color: white;
+  &:focus {
+    border-color: $distinctive-color;
+  }
+}

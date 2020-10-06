@@ -1,0 +1,94 @@
+@import '../../../scss/main.scss';
+
+.search {
+  color: $dark-white-color;
+
+  &__header {
+    background-color: $common-color;
+    height: 250px;
+    width: 100%;
+    padding: 30px 10px;
+    position: relative;
+  }
+  &__title {
+    text-align: center;
+    font-size: $largest-font;
+  }
+  &__browser {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 550px;
+    input {
+      @extend %styled-input;
+      height: 35px;
+      font-size: $large-font;
+      width: 70%;
+      margin-right: 15px;
+    }
+    ::placeholder {
+      color: rgb(196, 196, 196);
+    }
+    button {
+      width: 100px;
+    }
+  }
+  &__results {
+    padding: 50px 10px 20px;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    &__list {
+    }
+  }
+  &__form {
+    width: 100%;
+    max-width: 360px;
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: space-around;
+      width: 100%;
+      height: 100%;
+      label {
+        display: flex;
+        position: relative;
+        margin: 5px 0;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 300;
+      }
+      input {
+        border: 1px solid $dark-white-color;
+        border-radius: $primary-radius;
+        color: white;
+        &:focus {
+          border-color: $distinctive-color;
+        }
+      }
+    }
+  }
+  &__btn {
+    background-color: $distinctive-color;
+    color: $common-color;
+    border-radius: $primary-radius;
+    padding: 15px 10px;
+    max-width: 150px;
+    font-weight: 700;
+    transition: $hover-transition;
+    align-self: center;
+    margin-top: 40px;
+    &:hover {
+      background-color: darken($color: $distinctive-color, $amount: 10%);
+    }
+  }
+}
