@@ -1,0 +1,9 @@
+%primary-btn {
+  border-radius: $primary-radius;
+  padding: 10px 20px;
+  transition: $hover-transition;
+  &:hover {
+    color: white;
+    background-color: darken($dark-white-color, 90%);
+  }
+}

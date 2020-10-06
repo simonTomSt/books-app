@@ -1,0 +1,17 @@
+@import '../../../scss/main.scss';
+
+.navbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  &__link {
+    padding: 5px 10px;
+    margin: 0 5px;
+    font-size: $larger-font;
+    &--login {
+      align-self: flex-end;
+    }
+  }
+}

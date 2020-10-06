@@ -1,0 +1,49 @@
+@import '../../../scss/main.scss';
+
+.opening {
+  background-image: url('./background.jpg');
+  height: 100vh;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.521);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+  &__content {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+  }
+  &__header {
+    font-size: 4rem;
+    font-weight: 700;
+    color: $dark-white-color;
+    margin-bottom: 50px;
+    line-height: 5.5rem;
+  }
+  &__btn {
+    font-size: $larger-font;
+    background-color: rgba(56, 53, 53, 0.699);
+    color: $distinctive-color;
+    border: 2px solid $distinctive-color;
+    padding: 10px 20px;
+    transition: $hover-transition;
+    border-radius: $primary-radius;
+    &:hover {
+      color: $common-color;
+      background-color: $distinctive-color;
+    }
+  }
+}
