@@ -1,35 +1,36 @@
-import axios from 'axios';
 import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import BookCard from '../../generic/BookCard/BookCard';
 import Loader from '../../generic/Loader/Loader';
 import './Search.scss';
+import useBookSearch from '../../../hooks/useBookSearch';
 
 const Search = () => {
-  const [loader, setLoader] = useState(false);
-  let [data, setData] = useState([]);
-  const [title, setTitle] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [title, setTitle] = useState('');
   const [filters, setFilters] = useState({
     author: '',
     pubDate: '',
     language: '',
   });
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios(
-          `https://www.googleapis.com/books/v1/volumes?q=${title}`
-        );
-        setLoader(false);
-        setData([...response.data.items]);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    if (title.length > 0) {
-      fetchData();
-    }
-  }, [title]);
+  const { loading, books, error, hasMore } = useBookSearch(title, pageNumber);
+
+  const observer = useRef();
+  const lastElementRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPageNumber((prevPageNumber) => prevPageNumber + 11);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
+  const filterResults = (filters) => {};
 
   return (
     <section className="search">
@@ -39,7 +40,6 @@ const Search = () => {
           initialValues={{ title: '' }}
           onSubmit={(values) => {
             if (values.title !== title) {
-              setLoader(true);
               setTitle(values.title);
             }
           }}
@@ -52,52 +52,63 @@ const Search = () => {
           </Form>
         </Formik>
       </div>
-      <div className="search__filters">
+      <aside className="filters ">
+        <h2 className="filters__header">Filters</h2>
         <Formik
           initialValues={{
-            intitle: '',
-            inauthor: '',
-            inpublisher: '',
-            langRestrict: '',
+            authors: '',
+            language: '',
+            publishedDate: '',
+            categories: '',
           }}
-          onSubmit={(values) => {
-            console.log(values);
-          }}
+          onSubmit={(values) => filterResults(values)}
         >
-          <Form className="filters__form">
+          <Form className="search__settings ">
             <label>
-              Title:
-              <Field name="intitle" />
-            </label>
-            <label>
-              Author:
-              <Field name="inauthor" />
-            </label>
-            <label>
-              Year of publication:
-              <Field name="inpublisher" />
+              Authors:
+              <Field name="authors" />
             </label>
             <label>
               Language:
-              <Field name="langRestrict" />
+              <Field name="language" />
+            </label>
+            <label>
+              Date of publication:
+              <Field name="publishedDate" type="date" />
+            </label>
+            <label>
+              Category:
+              <Field name="categories" />
             </label>
             <button className="search__btn" type="submit">
-              Filtruj
+              Filter
             </button>
           </Form>
         </Formik>
-      </div>
+      </aside>
       <section className="search__results">
-        {loader ? (
-          <Loader />
-        ) : (
-          <ul className="search__list container">
-            {data.length > 0 &&
-              data.map(({ id, volumeInfo }) => (
-                <BookCard key={id} info={volumeInfo} />
-              ))}
-          </ul>
-        )}
+        <ul className="search__list container">
+          {books.map(({ id, volumeInfo }, index) => {
+            if (books.length === index + 1) {
+              return (
+                <BookCard
+                  key={id}
+                  info={volumeInfo}
+                  forwardRef={lastElementRef}
+                />
+              );
+            } else {
+              return <BookCard key={id} info={volumeInfo} />;
+            }
+          })}
+          {loading && <Loader />}
+          {error && (
+            <p style={{ color: 'red' }}>
+              {' '}
+              Sorry smoething went wrong! Try again!
+            </p>
+          )}
+        </ul>
       </section>
     </section>
   );

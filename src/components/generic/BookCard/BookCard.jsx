@@ -1,8 +1,8 @@
 import React from 'react';
 import './BookCard.scss';
 import sample from './sample.png';
-const BookCard = ({ info }) => {
-  console.log(info);
+const BookCard = ({ info, forwardRef }) => {
+  // console.log(info);
   const {
     title,
     authors,
@@ -24,13 +24,13 @@ const BookCard = ({ info }) => {
     }
   };
   return (
-    <article className="book">
+    <article className="book" ref={forwardRef}>
       <div className="book__content">
-        <h3 className="book__title">{title}</h3>{' '}
+        <h3 className="book__title">{title && title}</h3>{' '}
         {authors && (
-          <p className="ook__infor">
+          <p className="book__infor">
             <span> {authors.length > 1 ? 'Authors: ' : 'Author: '} </span>
-            {authors}
+            {authors.join(', ')}
           </p>
         )}
         {publishedDate && (
@@ -56,7 +56,7 @@ const BookCard = ({ info }) => {
           </p>
         )}
         {previewLink && (
-          <a href={previewLink}>
+          <a href={previewLink} target="_blank" rel="noopener noreferrer">
             <button className="book__btn">See more</button>
           </a>
         )}
