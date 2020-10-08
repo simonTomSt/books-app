@@ -10,8 +10,10 @@ const BookCard = ({ info, forwardRef }) => {
     language,
     publishedDate,
     imageLinks,
-    pageCount,
     previewLink,
+    printType,
+    publisher,
+    categories,
   } = info;
   const charLimit = 40;
 
@@ -44,9 +46,14 @@ const BookCard = ({ info, forwardRef }) => {
             <span>Language:</span> {language}{' '}
           </p>
         )}
-        {pageCount && (
+        {printType && (
           <p className="book__info">
-            <span>Number of pages: </span> {pageCount}{' '}
+            <span>Type: </span> {printType.toLowerCase()}{' '}
+          </p>
+        )}
+        {publisher && (
+          <p className="book__info">
+            <span>Publisher: </span> {publisher}{' '}
           </p>
         )}
         {description && (

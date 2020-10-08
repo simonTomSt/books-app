@@ -81,8 +81,6 @@
       padding: 40px 0 0;
     }
     form {
-      position: relative;
-
       label {
         height: 100%;
         width: 100%;
@@ -92,6 +90,17 @@
         justify-content: space-between;
         align-items: flex-start;
         text-align: left;
+      }
+      select {
+        background-color: transparent;
+        width: 85%;
+        color: white;
+        margin-top: 10px;
+        display: block;
+        padding: 4px;
+        &:active {
+          background-color: $neutral-color;
+        }
       }
       input {
         border-bottom: 1px solid rgb(197, 197, 197);
@@ -105,6 +114,7 @@
           border-color: $distinctive-color;
         }
       }
+
       button {
         width: 80%;
         background-color: $light-neutral-color;

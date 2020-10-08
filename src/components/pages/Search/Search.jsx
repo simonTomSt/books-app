@@ -1,19 +1,27 @@
 import { Field, Form, Formik } from 'formik';
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import BookCard from '../../generic/BookCard/BookCard';
 import Loader from '../../generic/Loader/Loader';
 import './Search.scss';
 import useBookSearch from '../../../hooks/useBookSearch';
 
 const Search = () => {
-  const [pageNumber, setPageNumber] = useState(1);
   const [title, setTitle] = useState('');
-  const [filters, setFilters] = useState({
-    author: '',
-    pubDate: '',
-    language: '',
+  const [pageNumber, setPageNumber] = useState(0);
+  const [langRestrict, setLangRestrict] = useState('');
+  const [printType, setPrintType] = useState('all');
+  const [query, setQuery] = useState('');
+  const [queryParams, setQueryParams] = useState({
+    inauthor: '',
+    inpublisher: '',
   });
-  const { loading, books, error, hasMore } = useBookSearch(title, pageNumber);
+  const { loading, books, error, hasMore, empty } = useBookSearch(
+    query,
+    title,
+    pageNumber,
+    langRestrict,
+    printType
+  );
 
   const observer = useRef();
   const lastElementRef = useCallback(
@@ -22,7 +30,7 @@ const Search = () => {
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPageNumber((prevPageNumber) => prevPageNumber + 11);
+          setPageNumber((prevPageNumber) => prevPageNumber + 10);
         }
       });
       if (node) observer.current.observe(node);
@@ -30,7 +38,22 @@ const Search = () => {
     [loading, hasMore]
   );
 
-  const filterResults = (filters) => {};
+  useEffect(() => {
+    const { inauthor, subject, inpublisher } = queryParams;
+    const checkParam = (type, param) => {
+      if (param.length > 0 && param) {
+        return `+${type}:"${param}"`;
+      } else {
+        return '';
+      }
+    };
+    setQuery(
+      `"${title}"${checkParam('inauthor', inauthor)}${checkParam(
+        'inpublisher',
+        inpublisher
+      )}`
+    );
+  }, [title, queryParams.inauthor, queryParams.inpublisher]);
 
   return (
     <section className="search">
@@ -56,29 +79,43 @@ const Search = () => {
         <h2 className="filters__header">Filters</h2>
         <Formik
           initialValues={{
-            authors: '',
-            language: '',
-            publishedDate: '',
-            categories: '',
+            inauthor: '',
+            langRestrict: '',
+            printType: 'all',
+
+            inpublisher: '',
           }}
-          onSubmit={(values) => filterResults(values)}
+          onSubmit={(values) => {
+            setLangRestrict(values.langRestrict);
+            setPrintType(values.printType);
+            setQueryParams({
+              inauthor: values.inauthor,
+
+              inpublisher: values.inpublisher,
+            });
+          }}
         >
           <Form className="search__settings ">
             <label>
-              Authors:
-              <Field name="authors" />
+              Author:
+              <Field name="inauthor" />
             </label>
             <label>
               Language:
-              <Field name="language" />
+              <Field name="langRestrict" />
             </label>
             <label>
-              Date of publication:
-              <Field name="publishedDate" type="date" />
+              Select type of printing:
+              <Field as="select" name="printType">
+                <option value="all" label="all" />
+                <option value="books" label="books" />
+                <option value="magazines" label="magazines" />
+              </Field>
             </label>
+
             <label>
-              Category:
-              <Field name="categories" />
+              Publisher:
+              <Field name="inpublisher" />
             </label>
             <button className="search__btn" type="submit">
               Filter
@@ -108,6 +145,7 @@ const Search = () => {
               Sorry smoething went wrong! Try again!
             </p>
           )}
+          {empty && <p> No results.</p>}
         </ul>
       </section>
     </section>
