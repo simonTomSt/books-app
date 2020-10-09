@@ -14,6 +14,7 @@ const useBookSearch = (query, title, startIndex, langRestrict, printType) => {
 
   useEffect(() => {
     async function fetchData() {
+      setEmpty(false);
       setLoading(true);
       try {
         const response = await axios.get(
@@ -30,6 +31,7 @@ const useBookSearch = (query, title, startIndex, langRestrict, printType) => {
           ]);
         }
         setHasMore(response.data.items.length >= 10);
+
         setLoading(false);
       } catch (error) {
         if (error.message === "Cannot read property 'length' of undefined") {
